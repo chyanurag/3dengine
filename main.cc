@@ -46,8 +46,8 @@ void DrawLine(float x1, float y1, float x2, float y2, sf::RenderWindow& window) 
 
 void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, sf::RenderWindow& window) {
     DrawLine(x1, y1, x2, y2, window);
+    DrawLine(x1, y1, x3, y3, window);
     DrawLine(x2, y2, x3, y3, window);
-    DrawLine(x3, y3, x1, y1, window);
 }
 
 void DrawCube(Cube& cube, sf::RenderWindow& window) {
@@ -58,26 +58,26 @@ void DrawCube(Cube& cube, sf::RenderWindow& window) {
         MultiplyMatrixVector(tri.p[0], triRotated.p[0], matRotX);
         MultiplyMatrixVector(tri.p[1], triRotated.p[1], matRotX);
         MultiplyMatrixVector(tri.p[2], triRotated.p[2], matRotX);
-    
+
         triTranslated = triRotated;
-        triTranslated.p[0].z = triRotated.p[0].z + 3.0f;
-        triTranslated.p[1].z = triRotated.p[1].z + 3.0f;
-        triTranslated.p[2].z = triRotated.p[2].z + 3.0f;
+        triTranslated.p[0].z = triRotated.p[0].z + 2.0f;
+        triTranslated.p[1].z = triRotated.p[1].z + 2.0f;
+        triTranslated.p[2].z = triRotated.p[2].z + 2.0f;
 
         MultiplyMatrixVector(triTranslated.p[0], triProjected.p[0], matProj);
         MultiplyMatrixVector(triTranslated.p[1], triProjected.p[1], matProj);
         MultiplyMatrixVector(triTranslated.p[2], triProjected.p[2], matProj);
 
-        triProjected.p[0].x += 1.f; triProjected.p[0].y += 1.f;
-        triProjected.p[1].x += 1.f; triProjected.p[1].y += 1.f;
-        triProjected.p[2].x += 1.f; triProjected.p[2].y += 1.f;
+        triProjected.p[0].x += .1f; triProjected.p[0].y += 1.f;
+        triProjected.p[1].x += .1f; triProjected.p[1].y += 1.f;
+        triProjected.p[2].x += .1f; triProjected.p[2].y += 1.f;
 
-        triProjected.p[0].x *= 0.4 * 1920.f;
-        triProjected.p[0].y *= 0.4 * 1080.f;
-        triProjected.p[1].x *= 0.4 * 1920.f;
-        triProjected.p[1].y *= 0.4 * 1080.f;
-        triProjected.p[2].x *= 0.4 * 1920.f;
-        triProjected.p[2].y *= 0.4 * 1080.f;
+        triProjected.p[0].x *= 0.5 * 1920.f;
+        triProjected.p[0].y *= 0.5 * 1080.f;
+        triProjected.p[1].x *= 0.5 * 1920.f;
+        triProjected.p[1].y *= 0.5 * 1080.f;
+        triProjected.p[2].x *= 0.5 * 1920.f;
+        triProjected.p[2].y *= 0.5 * 1080.f;
 
         DrawTriangle(triProjected.p[0].x, triProjected.p[0].y,
                 triProjected.p[1].x, triProjected.p[1].y,
@@ -99,13 +99,13 @@ int main() {
             { sf::Vector3f(0.f, 0.f, 0.f), sf::Vector3f(1.f, 1.f, 0.f), sf::Vector3f(1.f, 0.f, 0.f) },
 
             { sf::Vector3f(1.f, 0.f, 0.f), sf::Vector3f(1.f, 1.f, 0.f), sf::Vector3f(1.f, 1.f, 1.f) },
-            { sf::Vector3f(1.f, 0.f, 0.f), sf::Vector3f(1.f, 0.f, 0.f), sf::Vector3f(1.f, 0.f, 1.f) },
+            { sf::Vector3f(1.f, 0.f, 0.f), sf::Vector3f(1.f, 1.f, 1.f), sf::Vector3f(1.f, 0.f, 1.f) },
 
             { sf::Vector3f(1.f, 0.f, 1.f), sf::Vector3f(1.f, 1.f, 1.f), sf::Vector3f(0.f, 1.f, 1.f) },
             { sf::Vector3f(1.f, 0.f, 1.f), sf::Vector3f(0.f, 1.f, 1.f), sf::Vector3f(0.f, 0.f, 1.f) },
 
             { sf::Vector3f(0.f, 0.f, 1.f), sf::Vector3f(0.f, 1.f, 1.f), sf::Vector3f(0.f, 1.f, 0.f) },
-            { sf::Vector3f(0.f, 0.f, 1.f), sf::Vector3f(1.f, 1.f, 1.f), sf::Vector3f(0.f, 0.f, 0.f) },
+            { sf::Vector3f(0.f, 0.f, 1.f), sf::Vector3f(0.f, 1.f, 0.f), sf::Vector3f(0.f, 0.f, 0.f) },
 
             { sf::Vector3f(0.f, 1.f, 0.f), sf::Vector3f(0.f, 1.f, 1.f), sf::Vector3f(1.f, 1.f, 1.f) },
             { sf::Vector3f(0.f, 1.f, 0.f), sf::Vector3f(1.f, 1.f, 1.f), sf::Vector3f(1.f, 1.f, 0.f) },
@@ -122,23 +122,31 @@ int main() {
     matProj.m[2][3] = 1.0f;
     matProj.m[3][3] = 0.f;
 
-
     while (window.isOpen()) {
         sf::Event ev;
         while (window.pollEvent(ev)) {
             if (ev.type == sf::Event::Closed) {
                 window.close();
+            } else if (ev.type == sf::Event::KeyPressed) {
+                switch (ev.key.scancode) {
+                    case sf::Keyboard::Scan::A:
+                        fTheta += .1f;
+                        break;
+                    case sf::Keyboard::Scan::Escape:
+                        fTheta -= .1f;
+                        break;
+                }
             }
         }
 
         window.clear();
-        fTheta += .01f;
         matRotX.m[0][0] = 1.f;
         matRotX.m[1][1] = cosf(fTheta*0.5f);
         matRotX.m[1][2] = sinf(fTheta*0.5f);
         matRotX.m[2][1] = -sinf(fTheta*0.5f);
         matRotX.m[2][2] = cosf(fTheta*0.5f);
         matRotX.m[3][3] = 1.f;
+    
         DrawCube(cube, window);
         window.display();
     }
