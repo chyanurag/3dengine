@@ -1,5 +1,5 @@
-all: main.cc
-	g++ -lsfml-graphics -lsfml-window -lsfml-system -lm -o main main.cc
+all:
+	g++ -lsfml-window -lsfml-graphics -lsfml-system main.cc -o main
 
 clean:
 	rm -f main
